@@ -1,0 +1,27 @@
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import '../models/article_model.dart';
+
+class NewsApiService {
+  final String _apiKey = dotenv.env['NEWS_API_KEY'] ?? '';
+  final String _baseUrl = 'https://gnews.io/api/v4/';
+
+  Future<List<Article>> fetchTopHeadlines(String country) async {
+    final response = await http.get(Uri.parse('${_baseUrl}top-headlines?country=$country&apikey=$_apiKey'));
+
+    if (response.statusCode == 200)
+    {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      if (json['articles'] != null) {
+        List<dynamic> body = json['articles'];
+        List<Article> articles = body.map((dynamic item) => Article.fromJson(item)).toList();
+        return articles;
+      } else {
+        throw Exception(json['errors']?.join(', ') ?? 'Failed to parse articles');
+      }
+    } else {
+      throw Exception('Failed to load articles: ${response.body}');
+    }
+  }
+}
