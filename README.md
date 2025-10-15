@@ -1,16 +1,28 @@
-# hyperlocal_news
+# OrynoNews
 
-A new Flutter project.
+A Flutter-based hyperlocal news app that helps readers stay up to date with nearby headlines, browse by publisher, and save stories to read later. Built for fast startup, smooth scrolling, and clean UI.
 
-## Getting Started
+---
+## [IMPORTANT] Currently Supported Countries
+- Australia
+- Brazil
+- Canada
+- China
+- Egypt
+- France
+- Germany
 
-This project is a starting point for a Flutter application.
+and more! (refer to the link [here](https://docs.gnews.io/endpoints/search-endpoint#supported-countries))
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+p.s I'm trying hard to get more countries into the supported lists (so stay tuned!)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+- Favorite publishers and personalized categories sections
+- Button to refresh on feed
+
+## Tech Stack
+- App: Flutter (Dart), Material 3
+- Networking: http
+
+( This readme will be updated if there's any updates or changes to the app ^_- )

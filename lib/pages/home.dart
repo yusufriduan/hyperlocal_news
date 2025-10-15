@@ -9,13 +9,13 @@ import 'article_view.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
-
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   final NewsApiService _newsApiService = NewsApiService();
+  String _currentCountryCode = 'us';
   late Future<List<Article>> _newsFuture;
   List<CategoryMenu> categories = [];
 
@@ -86,8 +86,9 @@ class _HomeState extends State<Home> {
         String countryCode = place.isoCountryCode ?? 'US';
         setState(() {
           _locationMessage = "${place.country}";
-          debugPrint(countryCode);
           _isLoadingLocation = false;
+          _currentCountryCode = countryCode;
+          debugPrint(_currentCountryCode);
           _fetchNewsForCountry(countryCode);
         });
       } else {
@@ -106,6 +107,12 @@ class _HomeState extends State<Home> {
   void _fetchNewsForCountry(String country) {
     setState(() {
       _newsFuture = _newsApiService.fetchTopHeadlines(country.toLowerCase());
+    });
+  }
+
+  void _fetchNewsForCategory(String category) {
+    setState(() {
+      _newsFuture = _newsApiService.fetchNewsByCategory(_currentCountryCode.toLowerCase(), category);
     });
   }
 
@@ -155,6 +162,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -223,6 +233,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Home'),
                     onTap: () {
                       Navigator.pop(context);
+                      _fetchNewsForCountry(_currentCountryCode);
                     },
                   ),
                   ListTile(
@@ -243,11 +254,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Business'),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Business section coming soon!'),
-                        ),
-                      );
+                      _fetchNewsForCategory('business');
                     },
                   ),
                   ListTile(
@@ -255,11 +262,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Entertainment'),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Entertainment section coming soon!'),
-                        ),
-                      );
+                      _fetchNewsForCategory('entertainment');
                     },
                   ),
                   ListTile(
@@ -267,11 +270,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Health'),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Health section coming soon!'),
-                        ),
-                      );
+                      _fetchNewsForCategory('health');
                     },
                   ),
                   ListTile(
@@ -279,11 +278,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Science'),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Science section coming soon!'),
-                        ),
-                      );
+                      _fetchNewsForCategory('science');
                     },
                   ),
                   ListTile(
@@ -291,20 +286,17 @@ class _HomeState extends State<Home> {
                     title: const Text('Sports'),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Sports section coming soon!'),
-                        ),
-                      );
+                      _fetchNewsForCategory('sports');
                     },
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
+              padding: EdgeInsets.only(
+                left: 8.0,
+                right: 8.0,
+                bottom: bottomPadding > 0 ? bottomPadding : 4.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -386,6 +378,7 @@ class _HomeState extends State<Home> {
                                 MaterialPageRoute(
                                   builder: (context) => ArticleView(
                                     articleUrl: article.url,
+                                    publisherName: article.source.name,
                                   ),
                                 ),
                               );
