@@ -16,6 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final NewsApiService _newsApiService = NewsApiService();
   String _currentCountryCode = 'us';
+  String _currentCategory = 'general';
   late Future<List<Article>> _newsFuture;
   List<CategoryMenu> categories = [];
 
@@ -106,12 +107,14 @@ class _HomeState extends State<Home> {
 
   void _fetchNewsForCountry(String country) {
     setState(() {
+      _currentCategory = 'general';
       _newsFuture = _newsApiService.fetchTopHeadlines(country.toLowerCase());
     });
   }
 
   void _fetchNewsForCategory(String category) {
     setState(() {
+      _currentCategory = category;
       _newsFuture = _newsApiService.fetchNewsByCategory(_currentCountryCode.toLowerCase(), category);
     });
   }
@@ -233,7 +236,7 @@ class _HomeState extends State<Home> {
                     title: const Text('Home'),
                     onTap: () {
                       Navigator.pop(context);
-                      _fetchNewsForCountry(_currentCountryCode);
+                      _fetchNewsForCountry(_currentCountryCode.toLowerCase());
                     },
                   ),
                   ListTile(
@@ -395,8 +398,14 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Refresh feature coming soon!')),
+            const SnackBar(
+              content: Text('Refreshing news...'),
+              duration: Duration(seconds: 1),
+            ),
           );
+          setState(() {
+            _newsFuture = _newsApiService.fetchNewsByCategory(_currentCountryCode.toLowerCase(), _currentCategory);
+          });
         },
         label: const Text('Refresh'),
         icon: const Icon(Icons.refresh),
